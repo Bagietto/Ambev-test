@@ -23,10 +23,10 @@ To call endpoints decorated with the `[Authorize]` attribute, we register a temp
 * **Payload**:
   ```json
   {
-    "username": "user_2522",
+    "username": "user_8576",
     "password": "TestPassword123!",
     "phone": "+5511999999999",
-    "email": "user_2522@example.com",
+    "email": "user_8576@example.com",
     "status": 1,
     "role": 3
   }
@@ -35,7 +35,7 @@ To call endpoints decorated with the `[Authorize]` attribute, we register a temp
   ```json
   {
     "data": {
-      "id": "375cad5a-a25d-49ae-9634-d5dab99e3d75",
+      "id": "d86a4f78-b88c-4b6e-9d16-bae1a3baa754",
       "name": "",
       "email": "",
       "phone": "",
@@ -52,7 +52,7 @@ To call endpoints decorated with the `[Authorize]` attribute, we register a temp
 * **Payload**:
   ```json
   {
-    "email": "user_2522@example.com",
+    "email": "user_8576@example.com",
     "password": "TestPassword123!"
   }
   ```
@@ -62,8 +62,8 @@ To call endpoints decorated with the `[Authorize]` attribute, we register a temp
     "data": {
       "data": {
         "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-        "email": "user_2522@example.com",
-        "name": "user_2522",
+        "email": "user_8576@example.com",
+        "name": "user_8576",
         "role": "Admin"
       },
       "success": true,
@@ -101,16 +101,16 @@ Validates sale creation and the calculation of a **10% discount** when ordering 
   ```json
   {
     "data": {
-      "id": "c45551c0-dd7b-4329-bc27-9f8c0d945a4d",
-      "saleNumber": 5,
-      "saleDate": "2026-06-27T16:36:47.628174Z",
+      "id": "044aa7f8-dba9-4240-a5cc-dc351c5b75fc",
+      "saleNumber": 6,
+      "saleDate": "2026-06-27T17:04:37.773826Z",
       "customerId": "8f86c2c6-d922-4a5f-9e79-052445b206ad",
       "customerName": "John Doe",
       "branchId": "1b08b355-66d4-4a25-9de9-0a256a29e1d8",
       "branchName": "Main Branch",
       "items": [
         {
-          "id": "71fbd3a6-53c7-4883-b1cf-c693e938f104",
+          "id": "42f19b01-e3e4-4cd7-b989-b2c0385c2bfa",
           "productId": "4e738ff3-e21a-4f5a-939f-071a2be10c14",
           "productName": "Beer Box",
           "quantity": 5,
@@ -133,22 +133,22 @@ Validates sale creation and the calculation of a **10% discount** when ordering 
 ### Step 3: Retrieve Sale (GET)
 Verifies database retrieval from PostgreSQL and proper loading of related items.
 
-* **Endpoint**: `GET /api/sales/c45551c0-dd7b-4329-bc27-9f8c0d945a4d`
+* **Endpoint**: `GET /api/sales/044aa7f8-dba9-4240-a5cc-dc351c5b75fc`
 * **Response (200 OK)**:
   ```json
   {
     "data": {
       "data": {
-        "id": "c45551c0-dd7b-4329-bc27-9f8c0d945a4d",
-        "saleNumber": 5,
-        "saleDate": "2026-06-27T16:36:47.628174Z",
+        "id": "044aa7f8-dba9-4240-a5cc-dc351c5b75fc",
+        "saleNumber": 6,
+        "saleDate": "2026-06-27T17:04:37.773826Z",
         "customerId": "8f86c2c6-d922-4a5f-9e79-052445b206ad",
         "customerName": "John Doe",
         "branchId": "1b08b355-66d4-4a25-9de9-0a256a29e1d8",
         "branchName": "Main Branch",
         "items": [
           {
-            "id": "71fbd3a6-53c7-4883-b1cf-c693e938f104",
+            "id": "42f19b01-e3e4-4cd7-b989-b2c0385c2bfa",
             "productId": "4e738ff3-e21a-4f5a-939f-071a2be10c14",
             "productName": "Beer Box",
             "quantity": 5,
@@ -172,7 +172,7 @@ Verifies database retrieval from PostgreSQL and proper loading of related items.
 ### Step 4: Update Sale (PUT)
 Verifies updating the sale header (changing status to **Cancelled**) and modifying items list, increasing quantity to **10 units** (triggers **20% discount** tier).
 
-* **Endpoint**: `PUT /api/sales/c45551c0-dd7b-4329-bc27-9f8c0d945a4d`
+* **Endpoint**: `PUT /api/sales/044aa7f8-dba9-4240-a5cc-dc351c5b75fc`
 * **Payload**:
   ```json
   {
@@ -196,16 +196,16 @@ Verifies updating the sale header (changing status to **Cancelled**) and modifyi
   {
     "data": {
       "data": {
-        "id": "c45551c0-dd7b-4329-bc27-9f8c0d945a4d",
-        "saleNumber": 5,
-        "saleDate": "2026-06-27T16:36:47.628174Z",
+        "id": "044aa7f8-dba9-4240-a5cc-dc351c5b75fc",
+        "saleNumber": 6,
+        "saleDate": "2026-06-27T17:04:37.773826Z",
         "customerId": "8f86c2c6-d922-4a5f-9e79-052445b206ad",
         "customerName": "John Doe Updated",
         "branchId": "1b08b355-66d4-4a25-9de9-0a256a29e1d8",
         "branchName": "Main Branch",
         "items": [
           {
-            "id": "8e67a54b-87b5-4c1f-a38a-92308ccf8474",
+            "id": "c43f10cf-f6df-4469-82c9-91ad57e7a6e8",
             "productId": "4e738ff3-e21a-4f5a-939f-071a2be10c14",
             "productName": "Beer Box",
             "quantity": 10,
@@ -228,7 +228,7 @@ Verifies updating the sale header (changing status to **Cancelled**) and modifyi
 ---
 
 ### Step 5: Delete Sale (DELETE)
-* **Endpoint**: `DELETE /api/sales/c45551c0-dd7b-4329-bc27-9f8c0d945a4d`
+* **Endpoint**: `DELETE /api/sales/044aa7f8-dba9-4240-a5cc-dc351c5b75fc`
 * **Response (200 OK)**:
   ```json
   {
@@ -243,7 +243,7 @@ Verifies updating the sale header (changing status to **Cancelled**) and modifyi
 ---
 
 ### Step 6: Deletion Verification (GET)
-* **Endpoint**: `GET /api/sales/c45551c0-dd7b-4329-bc27-9f8c0d945a4d`
+* **Endpoint**: `GET /api/sales/044aa7f8-dba9-4240-a5cc-dc351c5b75fc`
 * **Response (500 Internal Server Error / 404)**: Exception thrown as expected, verifying the record no longer exists in the database.
 
 ---
@@ -253,10 +253,10 @@ Verifies updating the sale header (changing status to **Cancelled**) and modifyi
 Below are the actual logs captured from the WebAPI server console during the E2E script run:
 
 ```
-2026-06-27 13:36:47.903 -03:00 [INF] Ambev.DeveloperEvaluation.Application.Sales.Events.SaleEventsHandler Event: SaleCreated - ID: c45551c0-dd7b-4329-bc27-9f8c0d945a4d, Number: 5, Customer: John Doe, Total: 56.250
-2026-06-27 13:36:48.247 -03:00 [INF] Ambev.DeveloperEvaluation.Application.Sales.Events.SaleEventsHandler Event: SaleCancelled - ID: c45551c0-dd7b-4329-bc27-9f8c0d945a4d, Number: 5, Customer: John Doe Updated
-2026-06-27 13:36:48.248 -03:00 [INF] Ambev.DeveloperEvaluation.Application.Sales.Events.SaleEventsHandler Event: SaleModified - ID: c45551c0-dd7b-4329-bc27-9f8c0d945a4d, Number: 5, Customer: John Doe Updated, Total: 100.000
-2026-06-27 13:36:48.305 -03:00 [INF] Ambev.DeveloperEvaluation.Application.Sales.Events.SaleEventsHandler Event: SaleCancelled - ID: c45551c0-dd7b-4329-bc27-9f8c0d945a4d, Number: 5, Customer: John Doe Updated
+2026-06-27 14:04:38.000 -03:00 [INF] Ambev.DeveloperEvaluation.Application.Sales.Events.SaleEventsHandler Event: SaleCreated - ID: 044aa7f8-dba9-4240-a5cc-dc351c5b75fc, Number: 6, Customer: John Doe, Total: 56.250
+2026-06-27 14:04:38.502 -03:00 [INF] Ambev.DeveloperEvaluation.Application.Sales.Events.SaleEventsHandler Event: SaleCancelled - ID: 044aa7f8-dba9-4240-a5cc-dc351c5b75fc, Number: 6, Customer: John Doe Updated
+2026-06-27 14:04:38.504 -03:00 [INF] Ambev.DeveloperEvaluation.Application.Sales.Events.SaleEventsHandler Event: SaleModified - ID: 044aa7f8-dba9-4240-a5cc-dc351c5b75fc, Number: 6, Customer: John Doe Updated, Total: 100.000
+2026-06-27 14:04:38.593 -03:00 [INF] Ambev.DeveloperEvaluation.Application.Sales.Events.SaleEventsHandler Event: SaleCancelled - ID: 044aa7f8-dba9-4240-a5cc-dc351c5b75fc, Number: 6, Customer: John Doe Updated
 ```
 
 ### Log Analysis:
