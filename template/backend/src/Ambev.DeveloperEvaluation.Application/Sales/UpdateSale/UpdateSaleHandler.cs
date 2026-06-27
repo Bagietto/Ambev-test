@@ -2,7 +2,9 @@ using AutoMapper;
 using FluentValidation;
 using MediatR;
 using Ambev.DeveloperEvaluation.Domain.Entities;
+using Ambev.DeveloperEvaluation.Domain.Enums;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
+using Ambev.DeveloperEvaluation.Application.Sales.Events;
 
 namespace Ambev.DeveloperEvaluation.Application.Sales.UpdateSale;
 
@@ -13,16 +15,19 @@ public class UpdateSaleHandler : IRequestHandler<UpdateSaleCommand, UpdateSaleRe
 {
     private readonly ISaleRepository _saleRepository;
     private readonly IMapper _mapper;
+    private readonly IMediator _mediator;
 
     /// <summary>
     /// Initializes a new instance of UpdateSaleHandler.
     /// </summary>
     /// <param name="saleRepository">The sale repository</param>
     /// <param name="mapper">The AutoMapper instance</param>
-    public UpdateSaleHandler(ISaleRepository saleRepository, IMapper mapper)
+    /// <param name="mediator">The mediator instance</param>
+    public UpdateSaleHandler(ISaleRepository saleRepository, IMapper mapper, IMediator mediator)
     {
         _saleRepository = saleRepository;
         _mapper = mapper;
+        _mediator = mediator;
     }
 
     /// <summary>
@@ -39,6 +44,10 @@ public class UpdateSaleHandler : IRequestHandler<UpdateSaleCommand, UpdateSaleRe
         var sale = await _saleRepository.GetByIdAsync(command.Id, cancellationToken);
         if (sale == null)
             throw new KeyNotFoundException($"Sale with ID {command.Id} was not found");
+
+        // Take snapshot of previous state for events
+        var previousItems = sale.Items.ToList();
+        var previousStatus = sale.Status;
 
         // Map general properties
         sale.CustomerId = command.CustomerId;
@@ -68,6 +77,26 @@ public class UpdateSaleHandler : IRequestHandler<UpdateSaleCommand, UpdateSaleRe
         }
 
         var updatedSale = await _saleRepository.UpdateAsync(sale, cancellationToken);
+
+        // Publish events
+        // 1. Check for item cancellations (removed items)
+        foreach (var prevItem in previousItems)
+        {
+            if (!command.Items.Any(i => i.ProductId == prevItem.ProductId))
+            {
+                await _mediator.Publish(new ItemCancelledEvent(sale.Id, prevItem.ProductId, prevItem.ProductName), cancellationToken);
+            }
+        }
+
+        // 2. Check for sale cancellation transition
+        if (updatedSale.Status == SaleStatus.Cancelled && previousStatus != SaleStatus.Cancelled)
+        {
+            await _mediator.Publish(new SaleCancelledEvent(updatedSale), cancellationToken);
+        }
+
+        // 3. Publish modification event
+        await _mediator.Publish(new SaleModifiedEvent(updatedSale), cancellationToken);
+
         return _mapper.Map<UpdateSaleResult>(updatedSale);
     }
 }

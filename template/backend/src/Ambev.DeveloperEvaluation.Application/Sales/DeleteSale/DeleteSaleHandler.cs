@@ -1,6 +1,7 @@
 using FluentValidation;
 using MediatR;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
+using Ambev.DeveloperEvaluation.Application.Sales.Events;
 
 namespace Ambev.DeveloperEvaluation.Application.Sales.DeleteSale;
 
@@ -10,14 +11,17 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.DeleteSale;
 public class DeleteSaleHandler : IRequestHandler<DeleteSaleCommand, DeleteSaleResponse>
 {
     private readonly ISaleRepository _saleRepository;
+    private readonly IMediator _mediator;
 
     /// <summary>
     /// Initializes a new instance of DeleteSaleHandler.
     /// </summary>
     /// <param name="saleRepository">The sale repository</param>
-    public DeleteSaleHandler(ISaleRepository saleRepository)
+    /// <param name="mediator">The mediator instance</param>
+    public DeleteSaleHandler(ISaleRepository saleRepository, IMediator mediator)
     {
         _saleRepository = saleRepository;
+        _mediator = mediator;
     }
 
     /// <summary>
@@ -31,9 +35,14 @@ public class DeleteSaleHandler : IRequestHandler<DeleteSaleCommand, DeleteSaleRe
         if (!validationResult.IsValid)
             throw new ValidationException(validationResult.Errors);
 
-        var success = await _saleRepository.DeleteAsync(request.Id, cancellationToken);
-        if (!success)
+        var sale = await _saleRepository.GetByIdAsync(request.Id, cancellationToken);
+        if (sale == null)
             throw new KeyNotFoundException($"Sale with ID {request.Id} was not found");
+
+        await _saleRepository.DeleteAsync(request.Id, cancellationToken);
+
+        // Publish cancellation event
+        await _mediator.Publish(new SaleCancelledEvent(sale), cancellationToken);
 
         return new DeleteSaleResponse { Success = true };
     }

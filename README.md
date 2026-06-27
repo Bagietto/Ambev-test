@@ -1,77 +1,89 @@
-# Developer Evaluation Project
+# Developer Store - Sales API
 
-`READ CAREFULLY`
+Welcome to the **DeveloperStore Sales API**, a reference implementation built as part of the Developer Evaluation Project. This repository hosts a robust, production-ready REST API featuring a complete CRUD for managing sales records, adhering to strict Domain-Driven Design (DDD) principles and Clean Architecture.
 
-## Use Case
-**You are a developer on the DeveloperStore team. Now we need to implement the API prototypes.**
+---
 
-As we work with `DDD`, to reference entities from other domains, we use the `External Identities` pattern with denormalization of entity descriptions.
+## 🚀 Key Features
 
-Therefore, you will write an API (complete CRUD) that handles sales records. The API needs to be able to inform:
+* **Complete Sales CRUD**: Manage sale lifecycle (Creation, Retrieval, Update, and Cancellation).
+* **JWT Authentication Security**: All sales endpoints are secured using `[Authorize]` attributes, requiring valid JWT Bearer tokens obtained via the auth endpoint.
+* **DDD External Identities**: References to external domains (`Customer`, `Branch`, and `Product`) are modeled using UUIDs/Guids with denormalized entity descriptions for maximum performance and decoupling.
+* **Smart Discount Engine**: Encapsulates core business rules directly within the domain entities:
+  * 📦 **Quantity < 4**: No discount.
+  * 📦 **Quantity between 4 and 9**: 10% discount.
+  * 📦 **Quantity between 10 and 20**: 20% discount.
+  * 🚫 **Quantity > 20**: Prohibited (domain validation error).
+* **Automated Total Calculations**: Instant item-level discount and total value computations aggregated automatically to the sale's total.
+* **Domain & Application Events**: Publishes events in-process via MediatR Notifications (`SaleCreatedEvent`, `SaleModifiedEvent`, `SaleCancelledEvent`, and `ItemCancelledEvent`) for decoupled application logging.
 
-* Sale number
-* Date when the sale was made
-* Customer
-* Total sale amount
-* Branch where the sale was made
-* Products
-* Quantities
-* Unit prices
-* Discounts
-* Total amount for each item
-* Cancelled/Not Cancelled
+---
 
-It's not mandatory, but it would be a differential to build code for publishing events of:
-* SaleCreated
-* SaleModified
-* SaleCancelled
-* ItemCancelled
+## 📂 Documentation Index
 
-If you write the code, **it's not required** to actually publish to any Message Broker. You can log a message in the application log or however you find most convenient.
+To explore detailed evaluations of the core system design, architecture, and technology selections, consult the specialized documents below:
 
-### Business Rules
+* **[Overview](./.doc/overview.md)**: High-level overview of the evaluation and competencies.
+* **[Tech Stack](./.doc/tech-stack.md)**: Technical decisions, language, and tool choices.
+* **[Frameworks](./.doc/frameworks.md)**: Productive frameworks utilized in this project.
+* **[Project Structure](./.doc/project-structure.md)**: Folder organization and project layouts.
+* **[Bugs Found](./template/doc/bugs_found.md)**: Details and corrections of baseline template bugs (AutoMapper and Serilog).
+* **[Integration Tests Report](./template/doc/integration_tests.md)**: E2E HTTP CRUD validation payloads, JWT headers, and event logging evidence.
 
-* Purchases above 4 identical items have a 10% discount
-* Purchases between 10 and 20 identical items have a 20% discount
-* It's not possible to sell above 20 identical items
-* Purchases below 4 items cannot have a discount
+---
 
-These business rules define quantity-based discounting tiers and limitations:
+## 🛠️ How to Configure and Run the Project
 
-1. Discount Tiers:
-   - 4+ items: 10% discount
-   - 10-20 items: 20% discount
+Follow this guide to configure the database, apply migrations, and run the API locally.
 
-2. Restrictions:
-   - Maximum limit: 20 items per product
-   - No discounts allowed for quantities below 4 items
+### 1. Prerequisites
+Ensure you have the following installed:
+* **[.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)**
+* **[Docker Desktop](https://www.docker.com/products/docker-desktop/)** (or local PostgreSQL 13 instance)
+* **[Entity Framework Core CLI Tools](https://learn.microsoft.com/en-us/ef/core/cli/dotnet)** (`dotnet-ef`)
+  * To install EF CLI globally, run: 
+    ```bash
+    dotnet tool install --global dotnet-ef
+    ```
 
-## Overview
-This section provides a high-level overview of the project and the various skills and competencies it aims to assess for developer candidates. 
+### 2. Database Configuration
+1. Open a terminal in the `/backend` folder.
+2. Spin up the PostgreSQL database container in the background:
+   ```bash
+   docker compose up -d ambev.developerevaluation.database
+   ```
+3. Apply the EF Core database migrations to generate the database schema:
+   ```bash
+   dotnet ef database update --project src/Ambev.DeveloperEvaluation.ORM --startup-project src/Ambev.DeveloperEvaluation.WebApi
+   ```
 
-See [Overview](/.doc/overview.md)
+### 3. Running the Web API
+1. Navigate to the `/backend` directory.
+2. Launch the WebApi project:
+   ```bash
+   dotnet run --project src/Ambev.DeveloperEvaluation.WebApi --launch-profile http
+   ```
+3. Once running, open your web browser and access the interactive Swagger documentation page to test the endpoints:
+   ```
+   http://localhost:5119/swagger/index.html
+   ```
 
-## Tech Stack
-This section lists the key technologies used in the project, including the backend, testing, frontend, and database components. 
+---
 
-See [Tech Stack](/.doc/tech-stack.md)
+## 🧪 Testing and Coverage
 
-## Frameworks
-This section outlines the frameworks and libraries that are leveraged in the project to enhance development productivity and maintainability. 
+The project is backed by a rich test suite verifying both domain rules and application handler behavior.
 
-See [Frameworks](/.doc/frameworks.md)
+### Running Automated Tests
+To run all test cases (Domain, Application, and Infrastructure):
+1. Navigate to the `/backend` directory.
+2. Execute the dotnet test runner:
+   ```bash
+   dotnet test Ambev.DeveloperEvaluation.sln
+   ```
 
-<!-- 
-## API Structure
-This section includes links to the detailed documentation for the different API resources:
-- [API General](./docs/general-api.md)
-- [Products API](/.doc/products-api.md)
-- [Carts API](/.doc/carts-api.md)
-- [Users API](/.doc/users-api.md)
-- [Auth API](/.doc/auth-api.md)
--->
-
-## Project Structure
-This section describes the overall structure and organization of the project files and directories. 
-
-See [Project Structure](/.doc/project-structure.md)
+### Code Coverage Report
+To execute tests and generate rich HTML coverage reports locally:
+* **Windows (PowerShell/CMD):** Run `coverage-report.bat`
+* **Linux/macOS:** Run `chmod +x coverage-report.sh && ./coverage-report.sh`
+* The final HTML report will be generated at `./TestResults/CoverageReport/index.html`.

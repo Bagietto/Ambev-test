@@ -2,7 +2,9 @@ using AutoMapper;
 using FluentAssertions;
 using NSubstitute;
 using Xunit;
+using MediatR;
 using Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
+using Ambev.DeveloperEvaluation.Application.Sales.Events;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Ambev.DeveloperEvaluation.Unit.Application.TestData;
@@ -16,13 +18,15 @@ public class CreateSaleHandlerTests
 {
     private readonly ISaleRepository _saleRepository;
     private readonly IMapper _mapper;
+    private readonly IMediator _mediator;
     private readonly CreateSaleHandler _handler;
 
     public CreateSaleHandlerTests()
     {
         _saleRepository = Substitute.For<ISaleRepository>();
         _mapper = Substitute.For<IMapper>();
-        _handler = new CreateSaleHandler(_saleRepository, _mapper);
+        _mediator = Substitute.For<IMediator>();
+        _handler = new CreateSaleHandler(_saleRepository, _mapper, _mediator);
     }
 
     [Fact(DisplayName = "Given valid sale data When creating sale Then returns success response")]
@@ -63,6 +67,7 @@ public class CreateSaleHandlerTests
         createSaleResult.Should().NotBeNull();
         createSaleResult.Id.Should().Be(sale.Id);
         await _saleRepository.Received(1).CreateAsync(Arg.Any<Sale>(), Arg.Any<CancellationToken>());
+        await _mediator.Received(1).Publish(Arg.Any<SaleCreatedEvent>(), Arg.Any<CancellationToken>());
     }
 
     [Fact(DisplayName = "Given invalid sale data When creating sale Then throws validation exception")]
