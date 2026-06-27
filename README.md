@@ -29,6 +29,7 @@ To explore detailed evaluations of the core system design, architecture, and tec
 * **[Project Structure](./.doc/project-structure.md)**: Folder organization and project layouts.
 * **[Bugs Found](./template/doc/bugs_found.md)**: Details and corrections of baseline template bugs (AutoMapper and Serilog).
 * **[Integration Tests Report](./template/doc/integration_tests.md)**: E2E HTTP CRUD validation payloads, JWT headers, and event logging evidence.
+* **[Walkthrough Verification](./template/doc/walkthrough.md)**: Details of running the application, user creation, authentication, and full Sales CRUD verification.
 
 ---
 
